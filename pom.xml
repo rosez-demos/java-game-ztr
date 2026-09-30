@@ -31,6 +31,15 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- Pinned to an exact version JFrog Zero Touch Remediation has a Chainguard-patched
+         build for. Resolving this plain coordinate through ztr-demo-maven-virtual
+         transparently serves the remediated bytes, demonstrating ZTR for this project.
+         Not otherwise used by the app (logging goes through logback + log4j-to-slf4j). -->
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.25.1</version>
+    </dependency>
   </dependencies>
 
   <!-- Pin objenesis: the default 3.3 pulled in transitively by spring-boot-starter-test
