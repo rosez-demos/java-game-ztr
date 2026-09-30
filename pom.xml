@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>3.2.0</version>
+    <relativePath/>
+  </parent>
+
+  <groupId>com.jfrog.ztr</groupId>
+  <artifactId>tic-tac-toe</artifactId>
+  <version>0.1.0-SNAPSHOT</version>
+  <name>tic-tac-toe</name>
+  <description>Simple Tic-Tac-Toe web game</description>
+
+  <properties>
+    <java.version>17</java.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <!-- Pin objenesis: the default 3.3 pulled in transitively by spring-boot-starter-test
+       (via mockito) is blocked by this instance's curation policy as "immature";
+       3.2 is curation-compliant. -->
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.objenesis</groupId>
+        <artifactId>objenesis</artifactId>
+        <version>3.2</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <finalName>tic-tac-toe</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+  <!-- Deploy target: local repo backing ztr-demo-maven-virtual on the solenglatest
+       JFrog instance. Repository id must match the <server> id in Maven's settings.xml
+       (written by `jf setup maven`) so credentials resolve correctly. -->
+  <distributionManagement>
+    <repository>
+      <id>artifactory-mirror</id>
+      <url>https://solenglatest.jfrog.io/artifactory/ztr-demo-maven-local</url>
+    </repository>
+    <snapshotRepository>
+      <id>artifactory-mirror</id>
+      <url>https://solenglatest.jfrog.io/artifactory/ztr-demo-maven-local</url>
+    </snapshotRepository>
+  </distributionManagement>
+</project>

@@ -1,0 +1,10 @@
+version: 1
+type: maven
+resolver:
+    serverId: solenglatest
+    snapshotRepo: ztr-demo-maven-virtual
+    releaseRepo: ztr-demo-maven-virtual
+deployer:
+    serverId: solenglatest
+    snapshotRepo: ztr-demo-maven-local
+    releaseRepo: ztr-demo-maven-local
