@@ -40,6 +40,25 @@
       <artifactId>log4j-core</artifactId>
       <version>2.25.1</version>
     </dependency>
+    <!-- Pinned to exact versions JFrog Zero Touch Remediation has Chainguard-patched
+         builds for. Resolving these plain coordinates through ztr-demo-maven-virtual
+         transparently serves the remediated bytes, demonstrating ZTR for this project.
+         Not otherwise used by the app. -->
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-web</artifactId>
+      <version>5.7.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-crypto</artifactId>
+      <version>5.7.11</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-core</artifactId>
+      <version>5.7.11</version>
+    </dependency>
   </dependencies>
 
   <!-- Pin objenesis: the default 3.3 pulled in transitively by spring-boot-starter-test
