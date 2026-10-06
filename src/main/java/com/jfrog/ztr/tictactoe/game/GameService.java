@@ -8,11 +8,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class GameService {
 
+    private static final Mark COMPUTER_MARK = Mark.O;
+
     private final Map<String, Game> games = new ConcurrentHashMap<>();
+    private final ComputerPlayer computerPlayer = new ComputerPlayer();
 
     public Game createGame() {
+        return createGame(null);
+    }
+
+    public Game createGame(Difficulty difficulty) {
         String id = UUID.randomUUID().toString();
-        Game game = new Game(id);
+        Game game = new Game(id, difficulty);
         games.put(id, game);
         return game;
     }
@@ -27,7 +34,15 @@ public class GameService {
 
     public Game move(String id, int row, int col) {
         Game game = getGame(id);
-        game.applyMove(row, col);
+        synchronized (game) {
+            game.applyMove(row, col);
+            if (game.difficulty() != null
+                    && game.status() == GameStatus.IN_PROGRESS
+                    && game.currentPlayer() == COMPUTER_MARK) {
+                int[] reply = computerPlayer.chooseMove(game.board(), COMPUTER_MARK, game.difficulty());
+                game.applyMove(reply[0], reply[1]);
+            }
+        }
         return game;
     }
 }
