@@ -7,6 +7,8 @@ on:
 env:
   BUILD_NAME: java-game-ztr-test-rose
   JF_SERVER_ID: solenglatest
+  RESOLVE_REPO: maven-selfheal-virtual
+  DEPLOY_REPO: maven-local
 
 jobs:
   test:
@@ -28,6 +30,12 @@ jobs:
 
       - name: Configure JFrog CLI server
         run: jf c add "${{ env.JF_SERVER_ID }}" --url="${{ secrets.JF_URL }}" --access-token="${{ secrets.JF_ACCESS_TOKEN }}" --interactive=false
+
+      - name: Configure Maven resolver/deployer
+        run: |
+          jf mvn-config \
+            --server-id-resolve="${{ env.JF_SERVER_ID }}" --repo-resolve-releases="${{ env.RESOLVE_REPO }}" --repo-resolve-snapshots="${{ env.RESOLVE_REPO }}" \
+            --server-id-deploy="${{ env.JF_SERVER_ID }}"  --repo-deploy-releases="${{ env.DEPLOY_REPO }}"   --repo-deploy-snapshots="${{ env.DEPLOY_REPO }}"
 
       - name: Build and test
         run: jf mvn clean test -B
@@ -52,6 +60,12 @@ jobs:
 
       - name: Configure JFrog CLI server
         run: jf c add "${{ env.JF_SERVER_ID }}" --url="${{ secrets.JF_URL }}" --access-token="${{ secrets.JF_ACCESS_TOKEN }}" --interactive=false
+
+      - name: Configure Maven resolver/deployer
+        run: |
+          jf mvn-config \
+            --server-id-resolve="${{ env.JF_SERVER_ID }}" --repo-resolve-releases="${{ env.RESOLVE_REPO }}" --repo-resolve-snapshots="${{ env.RESOLVE_REPO }}" \
+            --server-id-deploy="${{ env.JF_SERVER_ID }}"  --repo-deploy-releases="${{ env.DEPLOY_REPO }}"   --repo-deploy-snapshots="${{ env.DEPLOY_REPO }}"
 
       - name: Build, test, and deploy
         run: jf mvn clean deploy -B --build-name="${{ env.BUILD_NAME }}" --build-number=${{ github.run_number }}
