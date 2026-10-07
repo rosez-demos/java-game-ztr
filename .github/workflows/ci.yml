@@ -21,6 +21,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      # JFrog Maven extractor 2.43.6 is incompatible with Maven 3.10 (runner default)
+      - uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.11
+
       - uses: jfrog/setup-jfrog-cli@v4
 
       - name: Configure JFrog CLI server
@@ -45,6 +50,11 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
+
+      # JFrog Maven extractor 2.43.6 is incompatible with Maven 3.10 (runner default)
+      - uses: stCarolas/setup-maven@v5
+        with:
+          maven-version: 3.9.11
 
       - uses: jfrog/setup-jfrog-cli@v4
 
