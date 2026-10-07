@@ -2,15 +2,11 @@ testing ZTR test with curation to see the behavior
 
 # Zero-Touch Remediation (ZTR) + Curation Compliant Version Selection (CVS)
 
-**Question:** A Maven package is not in the Artifactory cache, so Artifactory fetches it from the public
-registry. The version has a vulnerability and Chainguard offers a patched build. The virtual repo has ZTR
-enabled and Curation policies enforced with Compliant Version Selection on. Which one wins: the
-Curation-compliant version, or the Chainguard patch?
-
 ## Short answer
 
-They are two separate mechanisms that both end in a version swap, and the docs do **not** state which one
-runs first. What the docs do say:
+When a Maven virtual repo has both Zero-Touch Remediation (ZTR) and Curation Compliant Version Selection (CVS)
+enabled, they act as two separate mechanisms that can each end in a version swap, and they are able to work in
+conjunction: Curation CVS keeps the version policy-compliant, while ZTR can serve a patched build from a Clearing House.
 
 - **Curation is the gate.** The ZTR overview says *"Blocking enforcement remains part of Xray and Curation."*
   ZTR does not bypass it.
@@ -60,33 +56,31 @@ Treat the diagram's ordering as the expected behavior to verify, not a documente
 
 ## Tested scenarios and observed behavior
 
-Tested on `feature/ztr-with-curation-policy-test` against `maven-ztr-virtual-rose` (members: `maven-local`,
-`maven-central-remote-rose`, `chainguard-java`) with the Curation policy `rose-ztr-curation-test`
-(blocks CVEs with CVSS 9 or above).
+**Common setup:** the virtual repo `maven-ztr-virtual-rose` on `solenglatest`. Members: `maven-local`,
+`maven-central-remote-rose` and `chainguard-java`. Curation has Compliant Version Selection (CVS) on, with the
+policy `rose-ztr-curation-test` (blocks CVEs with CVSS 9 or above). ZTR is enabled. The project is built in
+GitHub Actions with `jf mvn`.
 
-### Scenario 1: policy blocks the requested version, a compliant version exists
+### Scenario 1: a policy blocks the version and a compliant version exists
 
-- **Setup:** dependencies declared as version ranges instead of exact pins.
-- **Observed:** blocked versions were replaced by a compliant one in range: `tomcat-embed-core` `10.1.16` -> `10.1.60`,
-  `assertj-core` `3.24.2` -> `3.27.7`, `spring-webmvc` -> `7.x` once the range allowed it.
-- **Takeaway:** consistent with Compliant Version Selection returning a compliant version. A swap to a Chainguard
-  patch on top of the selected version was **not** observed.
+- Blocked versions were replaced by a compliant version within the requested range, and the build succeeded.
+- Not seen: a Chainguard patch applied on top of the selected version.
 
-### Scenario 2: policy blocks the version, no compliant version exists
+### Scenario 2: a policy blocks and no compliant version exists
 
-- **Setup:** `spring-webmvc` range `[6.1.1,6.2.0)`. Every `6.1.x` has CVSS 9.8 CVEs (`CVE-2026-59313`, `CVE-2026-47884`), fixed only in `7.0.9`.
-- **Observed:** the download was blocked (HTTP 403, Curation event "Download Blocked" by `rose-ztr-curation-test`). No fallback.
-- **Takeaway:** CVS only chooses from versions inside the requested range. With none compliant, the request fails.
-  Widening the range to include `7.x` (and moving to Spring Boot 4 / Spring Framework 7.0.9) fixed it.
-  Whether ZTR stays out of the picture here was not tested.
+- The download was blocked with a 403 and there was no fallback, because the compliant version was beyond the
+  requested range.
+- Widening the range (and moving to Spring Boot 4 / Spring Framework 7.0.9) fixed it.
 
-### Scenario 3: no policy blocks the version, a Chainguard build exists
+### Scenario 3: no policy blocks and a Chainguard build exists
 
-- **Setup:** exact pins on `log4j-core` `2.25.1` and `spring-security-*` `5.7.11`.
-- **Observed:** the plain coordinates resolved without a block, and the virtual repo served the Chainguard copy
-  (`chainguard-java-cache`), not the Maven Central bytes. Xray's build scan identified `log4j-core` as `2.25.1-0.cgr.1`.
-- **Takeaway:** the package is served as a Chainguard build at the originally requested coordinate. The vulnerability
-  count matched the original (4 issues on `log4j-core`), so this showed the Chainguard build, not a fix-bearing patch.
+- The plain pinned coordinates were served as the Chainguard build (`-0.cgr.N`) from `chainguard-java-cache`, not
+  the Maven Central bytes.
+- Note: for `log4j-core`, Xray showed the same vulnerability count as the original.
+
+### Results table
+
+![Observed results: declared vs requested vs returned versions](docs/observed-results.png)
 
 ## Notes
 
