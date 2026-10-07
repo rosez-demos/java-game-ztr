@@ -31,33 +31,33 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- Pinned to an exact version JFrog Zero Touch Remediation has a Chainguard-patched
+    <!-- Version range (was an exact pin) for a version JFrog Zero Touch Remediation has a Chainguard-patched
          build for. Resolving this plain coordinate through ztr-demo-maven-virtual
          transparently serves the remediated bytes, demonstrating ZTR for this project.
          Not otherwise used by the app (logging goes through logback + log4j-to-slf4j). -->
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-core</artifactId>
-      <version>2.25.1</version>
+      <version>[2.25.1,3.0.0)</version>
     </dependency>
-    <!-- Pinned to exact versions JFrog Zero Touch Remediation has Chainguard-patched
+    <!-- Version ranges (were exact pins) for versions JFrog Zero Touch Remediation has Chainguard-patched
          builds for. Resolving these plain coordinates through ztr-demo-maven-virtual
          transparently serves the remediated bytes, demonstrating ZTR for this project.
          Not otherwise used by the app. -->
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-web</artifactId>
-      <version>5.7.11</version>
+      <version>[5.7.11,5.8.0)</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-crypto</artifactId>
-      <version>5.7.11</version>
+      <version>[5.7.11,5.8.0)</version>
     </dependency>
     <dependency>
       <groupId>org.springframework.security</groupId>
       <artifactId>spring-security-core</artifactId>
-      <version>5.7.11</version>
+      <version>[5.7.11,5.8.0)</version>
     </dependency>
   </dependencies>
 
