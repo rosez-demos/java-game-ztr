@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.0</version>
+    <version>4.0.7</version>
     <relativePath/>
   </parent>
 
@@ -19,16 +19,24 @@
 
   <properties>
     <java.version>17</java.version>
+    <!-- 7.0.9 is the first Spring Framework release without the CVSS 9.8 CVEs that the
+         rose-ztr-curation-test policy blocks in 6.1.x; keeps all Spring modules aligned. -->
+    <spring-framework.version>7.0.9</spring-framework.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-web</artifactId>
+      <artifactId>spring-boot-starter-webmvc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-webmvc-test</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- Version range (was an exact pin) for a version JFrog Zero Touch Remediation has a Chainguard-patched
@@ -74,16 +82,6 @@
       <!-- Version ranges (not exact pins) so Curation Compliant Version Selection can
            return the highest policy-compliant version when the BOM default is blocked.
            CVS does not fall back for locked versions, so these must stay ranges. -->
-      <dependency>
-        <groupId>org.apache.tomcat.embed</groupId>
-        <artifactId>tomcat-embed-core</artifactId>
-        <version>[10.1.16,10.2.0)</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-webmvc</artifactId>
-        <version>[6.1.1,8.0.0)</version>
-      </dependency>
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
