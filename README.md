@@ -1,1 +1,1 @@
-testing ZTR 2
+testing ZTR test with curation to see the behavior
