@@ -58,19 +58,42 @@ Treat the diagram's ordering as the expected behavior to verify, not a documente
 | **No useful patch** | If no suitable version exists or the patch would not reduce CVE exposure, the original artifact is served. |
 | **Xray indexing** | ZTR needs Xray-indexed remote repos behind the virtual repo. |
 
-## How to confirm the actual precedence on this repo
+## Tested scenarios and observed behavior
 
-Use a dependency that has a Chainguard patch and a known CVE, then try each combination against
-`maven-ztr-virtual-rose`:
+Tested on `feature/ztr-with-curation-policy-test` against `maven-ztr-virtual-rose` (members: `maven-local`,
+`maven-central-remote-rose`, `chainguard-java`) with the Curation policy `rose-ztr-curation-test`
+(blocks CVEs with CVSS 9 or above).
 
-1. ZTR on, **no** Curation policy blocking the version. Expect the Chainguard patch.
-2. ZTR on, a Curation vulnerability policy that blocks the version, CVS **on**, version **not** locked.
-   Expect the highest compliant version, or the patch if it is compliant. Note which one you get.
-3. Same as 2 with the version **locked** in the `pom.xml`. Expect a 403 per the CVS docs.
-4. Same as 2 with a policy the Chainguard patch violates (e.g. immaturity). Expect the patch not served.
+### Scenario 1: policy blocks the requested version, a compliant version exists
 
-For each: check the Curation audit log (original request vs delivered version) and the Xray scan status
-(*Patched*) to see which mechanism acted.
+- **Setup:** dependencies declared as version ranges instead of exact pins.
+- **Observed:** blocked versions were replaced by a compliant one in range: `tomcat-embed-core` `10.1.16` -> `10.1.60`,
+  `assertj-core` `3.24.2` -> `3.27.7`, `spring-webmvc` -> `7.x` once the range allowed it.
+- **Takeaway:** consistent with Compliant Version Selection returning a compliant version. A swap to a Chainguard
+  patch on top of the selected version was **not** observed.
+
+### Scenario 2: policy blocks the version, no compliant version exists
+
+- **Setup:** `spring-webmvc` range `[6.1.1,6.2.0)`. Every `6.1.x` has CVSS 9.8 CVEs (`CVE-2026-59313`, `CVE-2026-47884`), fixed only in `7.0.9`.
+- **Observed:** the download was blocked (HTTP 403, Curation event "Download Blocked" by `rose-ztr-curation-test`). No fallback.
+- **Takeaway:** CVS only chooses from versions inside the requested range. With none compliant, the request fails.
+  Widening the range to include `7.x` (and moving to Spring Boot 4 / Spring Framework 7.0.9) fixed it.
+  Whether ZTR stays out of the picture here was not tested.
+
+### Scenario 3: no policy blocks the version, a Chainguard build exists
+
+- **Setup:** exact pins on `log4j-core` `2.25.1` and `spring-security-*` `5.7.11`.
+- **Observed:** the plain coordinates resolved without a block, and the virtual repo served the Chainguard copy
+  (`chainguard-java-cache`), not the Maven Central bytes. Xray's build scan identified `log4j-core` as `2.25.1-0.cgr.1`.
+- **Takeaway:** the package is served as a Chainguard build at the originally requested coordinate. The vulnerability
+  count matched the original (4 issues on `log4j-core`), so this showed the Chainguard build, not a fix-bearing patch.
+
+## Notes
+
+- **Locked versions don't fall back.** Maven versions pinned in a `pom.xml` fail outright when blocked; ranges are required for CVS.
+- **Ranges make builds non-reproducible**, and can resolve pre-releases (for example `httpclient5` `5.7-alpha1`). They are used here for testing only.
+- **Not confirmed:** ordering between ZTR and Curation, and whether a remediated version is re-checked against Curation.
+  The ZTR automation config could not be inspected from the CLI.
 
 ## Sources
 
