@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main, 'feature/**', ztr-with-curation-policy-test ]
+    branches: [ main, 'feature/**' ]
 
 env:
   BUILD_NAME: java-game-ztr-test-rose
