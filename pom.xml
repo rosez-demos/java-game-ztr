@@ -71,6 +71,24 @@
         <artifactId>objenesis</artifactId>
         <version>3.2</version>
       </dependency>
+      <!-- Version ranges (not exact pins) so Curation Compliant Version Selection can
+           return the highest policy-compliant version when the BOM default is blocked.
+           CVS does not fall back for locked versions, so these must stay ranges. -->
+      <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-core</artifactId>
+        <version>[10.1.16,10.2.0)</version>
+      </dependency>
+      <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-webmvc</artifactId>
+        <version>[6.1.1,6.2.0)</version>
+      </dependency>
+      <dependency>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>[3.24.2,4.0.0)</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
