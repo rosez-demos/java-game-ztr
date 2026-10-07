@@ -35,6 +35,18 @@ public class Board {
         cells[row][col] = mark;
     }
 
+    public Board copy() {
+        Board copy = new Board();
+        for (int r = 0; r < SIZE; r++) {
+            System.arraycopy(cells[r], 0, copy.cells[r], 0, SIZE);
+        }
+        return copy;
+    }
+
+    public int size() {
+        return SIZE;
+    }
+
     public Mark at(int row, int col) {
         return cells[row][col];
     }

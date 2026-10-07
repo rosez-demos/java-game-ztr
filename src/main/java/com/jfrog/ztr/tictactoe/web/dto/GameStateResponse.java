@@ -8,7 +8,8 @@ public record GameStateResponse(
         String[][] board,
         String currentPlayer,
         String status,
-        List<int[]> winningLine) {
+        List<int[]> winningLine,
+        String difficulty) {
 
     public static GameStateResponse from(Game game) {
         return new GameStateResponse(
@@ -16,6 +17,7 @@ public record GameStateResponse(
                 game.board().toSymbolGrid(),
                 game.currentPlayer().symbol(),
                 game.status().name(),
-                game.winningLine());
+                game.winningLine(),
+                game.difficulty() == null ? null : game.difficulty().name());
     }
 }

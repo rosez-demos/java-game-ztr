@@ -1,9 +1,11 @@
 package com.jfrog.ztr.tictactoe.web;
 
+import com.jfrog.ztr.tictactoe.game.Difficulty;
 import com.jfrog.ztr.tictactoe.game.Game;
 import com.jfrog.ztr.tictactoe.game.GameService;
 import com.jfrog.ztr.tictactoe.web.dto.GameStateResponse;
 import com.jfrog.ztr.tictactoe.web.dto.MoveRequest;
+import com.jfrog.ztr.tictactoe.web.dto.NewGameRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +25,9 @@ public class GameController {
 
     @PostMapping("/api/game/new")
     @ResponseStatus(HttpStatus.CREATED)
-    public GameStateResponse newGame() {
-        Game game = gameService.createGame();
+    public GameStateResponse newGame(@RequestBody(required = false) NewGameRequest request) {
+        Difficulty difficulty = request == null ? null : request.difficulty();
+        Game game = gameService.createGame(difficulty);
         return GameStateResponse.from(game);
     }
 

@@ -3,9 +3,15 @@ let gameId = null;
 const boardEl = document.getElementById('board');
 const statusEl = document.getElementById('status');
 const newGameBtn = document.getElementById('new-game');
+const modeEl = document.getElementById('mode');
 
 async function startNewGame() {
-  const res = await fetch('/api/game/new', { method: 'POST' });
+  const difficulty = modeEl.value || null;
+  const res = await fetch('/api/game/new', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ difficulty }),
+  });
   const state = await res.json();
   gameId = state.id;
   render(state);
@@ -65,5 +71,6 @@ function statusText(state) {
 }
 
 newGameBtn.addEventListener('click', startNewGame);
+modeEl.addEventListener('change', startNewGame);
 
 startNewGame();

@@ -10,8 +10,19 @@ public class Game {
     private GameStatus status = GameStatus.IN_PROGRESS;
     private List<int[]> winningLine;
 
+    private final Difficulty difficulty;
+
     public Game(String id) {
+        this(id, null);
+    }
+
+    public Game(String id, Difficulty difficulty) {
         this.id = id;
+        this.difficulty = difficulty;
+    }
+
+    public Difficulty difficulty() {
+        return difficulty;
     }
 
     public synchronized void applyMove(int row, int col) {
