@@ -121,17 +121,19 @@
     </plugins>
   </build>
 
-  <!-- Deploy target: local repo backing ztr-demo-maven-virtual on the solenglatest
-       JFrog instance. Repository id must match the <server> id in Maven's settings.xml
+  <!-- Deploy target: local repo backing ztr-demo-maven-virtual on the JFrog instance.
+       The instance base URL comes from the DEPLOY_BASE_URL environment variable
+       (e.g. https://<your-instance>.jfrog.io); in CI it is set from the JF_URL secret.
+       Repository id must match the <server> id in Maven's settings.xml
        (written by `jf setup maven`) so credentials resolve correctly. -->
   <distributionManagement>
     <repository>
       <id>artifactory-mirror</id>
-      <url>https://solenglatest.jfrog.io/artifactory/ztr-demo-maven-local</url>
+      <url>${env.DEPLOY_BASE_URL}/artifactory/ztr-demo-maven-local</url>
     </repository>
     <snapshotRepository>
       <id>artifactory-mirror</id>
-      <url>https://solenglatest.jfrog.io/artifactory/ztr-demo-maven-local</url>
+      <url>${env.DEPLOY_BASE_URL}/artifactory/ztr-demo-maven-local</url>
     </snapshotRepository>
   </distributionManagement>
 </project>

@@ -7,6 +7,7 @@ on:
 env:
   BUILD_NAME: java-game-ztr-test-rose
   JF_SERVER_ID: solenglatest
+  DEPLOY_BASE_URL: ${{ secrets.JF_URL }}
 
 jobs:
   test:
