@@ -7,7 +7,8 @@ on:
 env:
   BUILD_NAME: java-game-ztr-test-rose
   JF_SERVER_ID: solenglatest
-  RESOLVE_REPO: maven-selfheal-virtual
+  DEPLOY_BASE_URL: ${{ secrets.JF_URL }}
+  RESOLVE_REPO: maven-ztr-virtual-rose
   DEPLOY_REPO: maven-local
 
 jobs:
